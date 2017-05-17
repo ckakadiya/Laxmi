@@ -1,0 +1,54 @@
+/* CSS Document */
+
+ul.setPaginate li.setPage{
+padding:15px 10px;
+font-size:14px;
+}
+
+ul.setPaginate{
+margin:0px;
+padding:0px;
+height:100%;
+overflow:hidden;
+font:20px 'Tahoma';
+list-style-type:none;	
+}  
+
+ul.setPaginate li.dot{padding: 3px 0;}
+
+ul.setPaginate li{
+float:left;
+margin:0px;
+padding:0px;
+margin-left:5px;
+}
+
+ul.setPaginate li a
+{
+background: none repeat scroll 0 0 #ffffff;
+border: 1px solid #cccccc;
+color: #999999;
+display: inline-block;
+font: 14px/18px Arial,Helvetica,sans-serif;
+margin: 5px 3px 0 0;
+padding: 0 5px;
+text-align: center;
+text-decoration: none;
+}	
+
+ul.setPaginate li a:hover,
+ul.setPaginate li a.current_page
+{
+background: none repeat scroll 0 0 #6B8E23; /* box color */
+border: 1px solid #000000;
+color: #ffffff;
+text-decoration: none;
+}
+
+ul.setPaginate li a{
+color:black;
+display:block;
+text-decoration:none;
+padding:5px 8px;
+text-decoration: none;
+}

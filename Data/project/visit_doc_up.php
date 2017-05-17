@@ -1,0 +1,783 @@
+<?php
+	session_start();
+	if(isset($_SESSION['cid']))
+	{
+		$str="visit_doctor";
+		$menu="all_vd";
+		include_once("global.php");
+		include_once("function.php");
+		include_once("paging.php");
+	 	$fdir = $_SERVER['PHP_SELF'];
+		$cid=$_SESSION['cid'];
+		//echo $cid;
+		$vdid=0;
+		if(isset($_GET['vdid']))
+		{
+			$vdid=$_GET['vdid'];
+		}
+		$result=sel_visitdoc($vdid);
+		//print_r($result);
+	 
+	//echo $fdir;
+?>
+<!DOCTYPE html>
+<html>
+<HEAD>
+	<meta content="text/html; charset=UTF-8" http-equiv="content-type">
+	<meta charset="utf-8">
+	<TITLE>Docters Helper</TITLE>
+	<meta content="width=device-width, initial-scale=1, maximum-scale=1" name="viewport">
+	<LINK type="text/css" href="css/skeleton.css" rel="StyleSheet">
+	<LINK type="text/css" href="css/base.css" rel="StyleSheet">
+	<LINK type="text/css" href="css/style.css" rel="StyleSheet">
+	<LINK type="text/css" href="css/table.css" rel="StyleSheet">
+	<LINK type="text/css" href="css/multiselect.css" rel="StyleSheet">
+<!--     <link rel="stylesheet" href="css/jquery-ui-1.css"> -->
+<!-- 	<LINK type="text/css" href="jqtransform.css" rel="StyleSheet"> -->
+
+<!-- <script src="Infinity%20_files/modernizr-2.js"></script> -->
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/jq.js" type="text/javascript"></script>
+<script src="js/vd.js" type="text/javascript"></script>
+<SCRIPT>
+	/*$(document).ready(function(){
+		$(".delete-click").click(function(){
+			//alert($(".delete-click").html());
+// 			$(this).addClass("dark_overlay");
+// 			$(this).addClass("bright_content");
+			alert("dffd");
+			alert($(this).attr("id"));
+			$("#deletelight").css('display', 'block');
+			$("#deletefade").css('display', 'block');
+		});
+		$("#deleteclose").click(function(){
+// 			$(this).addClass("dark_overlay");
+// 			$(this).addClass("bright_content");
+			$("#deletelight").css('display', 'none');
+			$("#deletefade").css('display', 'none');
+		});
+		$(".edit-click").click(function(){
+// 			$(this).addClass("dark_overlay");
+// 			$(this).addClass("bright_content");
+			var c=$(this).attr("id");
+			alert(c);
+			alert($("#vdid_"+c).val());
+			$("#editlight").css('display', 'block');
+			$("#editfade").css('display', 'block');
+		});
+		$("#editclose").click(function(){
+// 			$(this).addClass("dark_overlay");
+// 			$(this).addClass("bright_content");
+			$("#editlight").css('display', 'none');
+			$("#editfade").css('display', 'none');
+		});
+	});*/
+		function confirmSubmit()
+		{
+			var agree=confirm("Are you sure you wish to Delete this Entry?");
+			if (agree)
+				return true ;
+			else
+				return false ;
+		}
+	
+</SCRIPT>
+
+</HEAD>
+
+<BODY>
+<?php
+	include_once "header.php";
+?>
+<div id="container">
+	<?php
+		include_once "vd_menu.php";
+	?>
+	<?php 
+		if(isset($_REQUEST['op']) && $_REQUEST['op']=="delete")
+		{
+			$vdid=$_REQUEST['vdid'];
+			//echo $mrid;
+			$res_del=delVisitDoc($vdid);	
+		}
+	?>
+		<div class="bit-14">
+		<div class="box-element">
+        	<div class="box-head-light"><span class="typography-16"></span><h3>Visiting_Doctors</h3></div>	
+			<div class="box-content no-padding">
+				<form method="post" action="" class="i-validate"> 
+					<fieldset>
+						<section><h4 class="no-margin">Doctor Infornation</h4></section>
+			                        <section class="no-padding" id="refvdinfo">
+							<ul class="list">
+								<li>
+									<?php	
+										if ($result['status'] == 0)
+										{
+									?>
+										<input type="hidden" name="txtvdid" " id="vdid" value="<?php echo $vdid;?>"/>			<input type="hidden" name="txtuid" " id="uid" value="<?php echo $result['user_id'];?>"/>			
+				<input type="hidden" name="txtcid" " id="cid" value="<?php echo $cid;?>"/>
+								</li>
+								<LI>
+									<label for="text_field">Name</label>
+								</LI>
+								<li class="wid-auto" id="editvdname">
+									<label for="text_field" class="red" id="vdname" value="<?php echo $result['doctor_name']; ?>"><?php echo $result['doctor_name']; ?></label>									
+								</li>
+								<li id="heditvdname" hidden="hidden">
+									<input style="width:130px;" type="text" id="hvdname" value="<?php echo $result['doctor_name']; ?>" />	
+								<li></li>
+							</ul>
+							<ul class="list">
+								<LI>
+									<label for="text_field">Speciality</label>
+								</LI>
+								<li class="wid-auto" id="editspeciality">
+									<label for="text_field" class="red" id="speciality"><?php echo $result['speciality']; ?></label>
+								</li>
+								<li id="heditspeciality" hidden="hidden">
+									<input style="width:130px;" type="text" id="hspeciality" value="<?php echo $result['speciality']; ?>" />	
+								<li></li>
+							</ul>
+							<ul class="list">
+								<li class="wid-auto butt-margin">
+									<div class="r-float"><input class="icon16 edit-16 vd" value="" id="edit" type="button"><input  value="save" id="save" type="button" hidden>
+
+									</div>
+									
+									<div class="r-float"><input  value="cancel" type="button" id="cancel" hidden></div>
+								</li>
+								<li></li>
+							</ul>
+							
+							<div class="clearfix"></div>
+						</section>
+						<section><h4 class="no-margin">visit-time</h4></section>
+						<section class="no-padding" id="reftime">
+							<div class="lists " style="padding-top:3px; height:40px; font-weight:bold; background-color: #f4f4f4;">
+							<ul class="list">
+								<li style=" width: 200px;">Start</li>
+								<li style=" width: 200px;">Till</li>
+								<li style=" width: 200px;">Day</li>
+								<li>
+									<div class="clearfix"></div>
+								</li>
+							</ul>
+							</div>
+							<?php
+								$size=0;
+								$j=1;
+								while($size < count($result['start']))
+								{
+								?>
+							<ul class="list" id="<?php echo 'time_'.$j; ?>">
+								
+								<li id="<?php echo 'startcol_'.$j;?>" style=" width: 200px;"><?php echo $result['start'][$size]; ?></li>
+								<li id="<?php echo 'tillcol_'.$j;?>" style=" width: 200px;"><?php echo $result['till'][$size]; ?></li>
+								<li id="<?php echo 'daycol_'.$j;?>" style=" width: 200px;"><?php echo $result['day'][$size]; ?></li>				
+								<li class="time" style=" padding-left:0px; width: 30px;" id="<?php echo 'edittime_'.$j; ?>"><a href="javascript:void(0);" >Edit</a></li>
+								<li class="time" style="padding-left:0px; width: 30px;" id="<?php echo 'deltime_'.$j; ?>"><a href="javascript:void(0);" >Delete</a></li>		
+								<li><div class="clearfix"></div></li>
+							</ul>
+							<ul class="list" hidden id="<?php echo 'htime_'.$j;?>">
+								<input type="hidden" size="2" id="<?php echo 'htid_'.$j;?>" value="<?php echo $result['tid'][$size]; ?>" />
+								<li  id="<?php echo 'edittime_'.$j; ?>" style="width:200px;">
+									<input style="width:130px;" type="text" hidden	 id="<?php echo 'hstart_'.$j; ?>" value="<?php echo $result['start'][$size]; ?>" />	
+								<?php //echo $size;?>
+								<div >
+								<select class="chzn-single" style="width:70px;" tabindex="2" name="selstart" id="<?php echo 'start_'.$j;?>" required>							
+									<option><?php 
+										if($result['start'][$size] != "")
+										{	
+											$start=explode(" ",$result['start'][$size]);
+											$start1=explode(":",$start[0]);
+											$start[0]=$start1[0].":00:00";
+				        						echo $start[0]; 
+										}
+										else
+										{
+											$result['start']="1:00:00 AM";
+											$start=explode(" ",$result['start']);
+				        						echo $start[0]; 
+										}
+									?></option>
+									<?php
+										$cnt=1;
+										while($cnt <= 12)
+										{
+											if($cnt == $start[0])
+											{
+												$cnt++;
+												continue;
+											}
+											$cnt1="$cnt:00:00";
+											echo "<option value='$cnt1'>".$cnt1."</option>";
+											$cnt++;
+										}
+									?>	
+					
+							</select>
+							<select class="chzn-single" style="width:60px;" tabindex="2" id="<?php echo 'smin_'.$j;?>""  name="selsmin">
+										<option><?php 
+										if($result['start'][$size] != "")
+										{	
+											$start=explode(" ",$result['start'][$size]);
+											$time=explode(":",$start[0]);
+				        						echo $time[1].":00"; 
+										}
+										else
+										{
+											$result['start']="1:00:00 AM";
+											$start=explode(" ",$result['start']);
+											$time=explode(':',$start[0]);
+				        						echo $time[1].":00"; 
+										}
+									?></option>
+									
+									<?php
+										$cnt=05;
+										while($cnt <= 55)
+										{
+											if($cnt == $time[1])
+											{
+												$cnt=$cnt+5;
+												continue;
+											}
+											$cnt1="$cnt:00";
+											echo "<option value='$cnt1'>".$cnt1."</option>";
+											$cnt=$cnt+5;
+										}
+									?>	
+									</select>
+									
+							<select class="chzn-single" style="width:40px;" tabindex="2" id="<?php echo 'smed_'.$j;?>"  name="selsmed">
+								<option><?php $start=explode(" ",$result['start'][$size]);
+									      echo $start[1]; ?></option>
+									<?php
+										if($start[1] == AM)
+										{
+											echo "<option value='PM'>PM</option>";
+										}
+										else
+										{
+											echo "<option value='AM'>AM</option>";
+										}
+									?>
+							</select>
+							</div>
+						</li>
+						<li style="width:200px;">
+							<input style="width:130px;" type="text" hidden id="<?php echo 'htill_'.$j; ?>"  value="<?php echo $result['till'][$size]; ?>" />	
+							<div>
+							<select class="chzn-single" style="width:70px;" tabindex="2" name="seltill" id="<?php echo 'till_'.$j;?>" required>							<option><?php
+									if($result['till'][$size] != "")
+									{	
+										$till=explode(" ",$result['till'][$size]);
+										$till1=explode(":",$till[0]);
+										$till[0]=$till1[0].":00:00";
+				        					echo $till[0]; 
+									}
+									else
+									{
+										$result['till']="1:00:00 AM";
+										$till=explode(" ",$result['till']);
+				        					echo $till[0]; 
+									}
+								?></option>
+								<?php
+									$cnt=1;
+									while($cnt <= 12)
+									{
+										if($cnt == $till[0])
+										{
+											$cnt++;
+											continue;
+										}
+										
+										$cnt1="$cnt:00:00";
+										echo "<option value='$cnt1'>".$cnt1."</option>";
+										$cnt++;
+									}
+								?>
+							</select>
+							<select class="chzn-single" style="width:60px;" tabindex="2" id="<?php echo 'tmin_'.$j;?>""  name="seltmin">
+									<option><?php 
+										if($result['till'][$size] != "")
+										{	
+											$till=explode(" ",$result['till'][$size]);
+											$time=explode(":",$till[0]);
+				        						echo $time[1].":00"; 
+										}
+										else
+										{
+											$result['till']="1:00:00 AM";
+											$till=explode(" ",$result['till']);
+											$time=explode(':',$till[0]);
+				        						echo $time[1].":00"; 
+										}
+									?></option>
+									
+									<?php
+										$cnt=05;
+										while($cnt <= 55)
+										{
+											if($cnt == $time[1])
+											{
+												$cnt=$cnt+5;
+												continue;
+											}
+											$cnt1="$cnt:00";
+											echo "<option value='$cnt1'>".$cnt1."</option>";
+											$cnt=$cnt+5;
+										}
+									?>	</select>
+									
+							<select class="chzn-single" style="width:40px;" tabindex="2" id="<?php echo 'tmed_'.$j;?>"  name="seltmed">
+								<option><?php $till=explode(" ",$result['till'][$size]);
+									      echo $till[1]; ?></option>
+								<?php
+									if($till[1] == AM)
+									{
+										echo "<option value='PM'>PM</option>";
+									}
+									else
+									{
+										echo "<option value='AM'>AM</option>";
+									}
+								?>
+								
+							</select>
+							</div>
+						</li>
+						<li style="height: 40px; width: 190px; padding-top: 0px;">
+							<input style="width:130px;" type="text" hidden id="<?php echo 'hday_'.$j; ?>"  value="<?php echo $result['day'][$size]; ?>" />	
+							<div class="section-left-s">
+							<select class="chzn-single" style="width:80px;" tabindex="2"	 name="selday" id="<?php echo 'day_'.$j;?>" required>				
+							<?php 
+								$day[0]="Monday";
+								$day[1]="Tuesday";
+								$day[2]="Wednesday";
+								$day[3]="Thursday";
+								$day[4]="Friday";
+								$day[5]="Saturday";
+								$day[6]="Sunday";	
+								$cnt=0;
+								if($result['day'][$size] != "")
+								{
+									echo "<option>".$result['day'][$size]."</option>";
+								}
+								else
+								{		
+									$result['day']="Monday";
+									echo "<option>".$result['day']."</option>";
+								}
+								while($cnt < count($day))
+								{
+									if($result['day'][$size] == $day[$cnt])
+									{
+										$cnt++;
+										continue;
+									}
+									echo "<option>".$day[$cnt]."</option>";	
+									$cnt++;
+								}						
+							?>.			
+						
+					</select>
+							</div>
+						</li>	
+						<li style=" width:30px;" id="<?php echo 'save_'.$j;?>" class="time">
+							<a href="javascript:void(0);">Save</a>
+						</li>
+						<li style="width:30px;" id="<?php echo 'cancel_'.$j;?>" class="time">
+							<a href="javascript:void(0);">cancel</a>
+						</li>
+								
+						<li><div class="clearfix"></div></li>	
+					</ul>
+							
+							<?php
+								$size++;
+								$j++;
+							}
+							?>
+						<ul class="list" id="newtime">
+						</ul>
+								
+						<ul class="list" id="timebox">
+						<li colspan="3" align="center" style="width:100%;">
+							<a style="padding-left:60px;" href="javascript:void(0);" class="icon16-button forms-16" id="ntime" name="ntime">Add more Time</a>
+						</li>
+						<li><div class="clearfix"></div></li>
+					</ul>
+					
+						<div class="clearfix"></div>	
+					</section>
+					<section><h4 class="no-margin">Email</h4></section>
+						<section class="no-padding" id="refemail">
+							<?php
+								$size=0;
+								$j=1;
+								while($size < count($result['email']))
+								{
+								?>
+							<ul class="list" id="<?php echo 'mailrow_'.$j; ?>">
+								
+								<li id="<?php echo 'mailcol_'.$j;?>" style=" width: 150px;"><?php echo $result['email'][$size]; ?></li>
+								<li class="email" style=" padding-left:0px; width: 30px;" id="<?php echo 'editmail_'.$j; ?>"><a href="javascript:void(0);" >Edit</a></li>
+								<li class="email" style="padding-left:0px; width: 30px;" id="<?php echo 'delmail_'.$j; ?>"><a href="javascript:void(0);" >Delete</a></li>						
+								<li><div class="clearfix"></div></li>
+							</ul>
+							<ul class="list" id="<?php echo 'hmailrow_'.$j;?>" hidden="hidden">
+								<input type="hidden" size="2" id="<?php echo 'heid_'.$j;?>" name="heid" value="<?php echo $result['eid'][$size]; ?>" />
+								<li  id="<?php echo 'editmail_'.$j; ?>">
+									<input style="width:140px;" type="email" id="<?php echo 'hmail_'.$j; ?>" name="h_mail" value="<?php echo $result['email'][$size]; ?>" />	
+								</li>
+								<li style=" width:40px;" id="<?php echo 'save_'.$j;?>" class="email">
+									<a href="javascript:void(0);">Save</a>
+								</li>
+								<li style="width:30px;" id="<?php echo 'cancel_'.$j;?>" class="email">
+									<a href="javascript:void(0);">cancel</a>
+								</li>
+								<li><div class="clearfix"></div></li>
+							</ul>
+								<?php
+									$size++;
+									$j++;
+								}
+								?>
+								
+								<ul class="list" id="newemail">
+								</ul>
+								<ul class="list" id="mailbox">
+									
+									<li colspan="3" align="center" style="width:100%;"><a style="padding-left:60px;" href="javascript:void(0);" class="icon16-button forms-16" id="nemail" name="nemail">Add more Email</a></li>
+									<li><div class="clearfix"></div></li>
+								</ul>
+							
+						<div class="clearfix"></div>	
+					</section>
+					<section><h4 class="no-margin">Phone_no</h4></section>
+						<section class="no-padding" id="refphno">
+							<?php
+								$size=0;
+								$j=1;
+								while($size < count($result['phno']))
+								{
+								?>
+								<ul class="list" id="<?php echo 'phnorow_'.$j; ?>">
+									<li id="<?php echo 'phnocol_'.$j;?>" style=" width: 120px;"><?php echo $result['phno'][$size]; ?></li>
+									<li class="phno" style=" padding-left:0px; width: 30px;" id="<?php echo 'editphno_'.$j; ?>"><a href="javascript:void(0);" >Edit</a></li>
+									<li class="phno" style="padding-left:0px; width: 30px;" id="<?php echo 'delphno_'.$j; ?>"><a href="javascript:void(0);" >Delete</a></li>						
+									<li><div class="clearfix"></div></li>
+								</ul>
+								<ul class="list" id="<?php echo 'hphnorow_'.$j;?>" hidden="hidden">
+									<input  type="hidden" size="2" id="<?php echo 'hcid_'.$j;?>" name="hcid" value="<?php echo $result['pid'][$size]; ?>" />
+								<li style="width:120px;" id="<?php echo 'editphno_'.$j; ?>">
+									<input style="width:100px;" type="text" id="<?php echo 'hphno_'.$j; ?>" name="h_phno" value="<?php echo $result['phno'][$size]; ?>" />
+								</li>
+								<li style=" width:30px;" id="<?php echo 'save_'.$j;?>" class="phno">
+									<a href="javascript:void(0);">Save</a>
+								</li>
+								<li style="width:30px;" id="<?php echo 'cancel_'.$j;?>" class="phno">
+									<a href="javascript:void(0);">cancel</a>
+								</li>
+								<li><div class="clearfix"></div></li>	
+							</ul>
+							<?php
+								$size++;
+								$j++;
+							}
+							?>
+							<ul class="list" id="newphno">
+							</ul>
+							<ul class="list" id="phnobox">
+								<li colspan="3" align="center" style="width:100%;" >
+									<label><a href="javascript:void(0);" class="icon16-button forms-16" style="padding-left:60px;" id="nphno" name="nphno">Add more Phone_no</a></label>			
+								</li>
+								<li><div class="clearfix"></div></li>
+							</ul>
+				</section>
+				
+			<?php
+			}
+			?>
+                </fieldset>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="deletelight" class="bright_content-delete">
+<div class="box-content no-padding">
+	<form novalidate="novalidate" method="post" action="" class="i-validate"> 
+	<fieldset>
+			<section class="no-padding">
+				<ul class="list">
+					<li class=" wid-auto">
+						<span class="red">Are you sure, you want delete?</span>
+					</li>
+					<li></li>
+				</ul>
+				<div class="clearfix"></div>
+			</section>
+			<section class="no-padding">
+				<ul class="list">
+					<li class="wid-auto">
+						<div class="r-float"><input class="button" value="Yes" id="btndelete" type="button"></div>
+						<div class="r-float" id="deleteclose"><input class="button" value="No"  type="button"></div>
+					</li>
+					<li></li>
+				</ul>
+				<div class="clearfix"></div>
+			</section>
+		</fieldset>
+	</form>
+</div>
+</div>
+<div id="deletefade" class="dark_overlay"></div>
+<div id="editlight" class="bright_content">
+<?php
+	$id=4;
+	$result=sel_visitdoc($id);
+	if($result['status'] == 0)
+	{
+?>
+<div class="box-content no-padding">
+	<form novalidate="novalidate" method="post" action="visit_doctor_updateproc.php" class="i-validate"> 
+		<fieldset>
+			<section>
+				<div><input name="txtname" value="<?php echo $result['id']; ?>" id="vdid"/></div>
+				<div class="section-left-s">
+					<label for="text_field">Name</label>
+				</div>
+				<div class="section-right">
+					<div class="section-input"><input name="txtdname" value="<?php echo $result['doctor_name']; ?>" id="docname"  class="i-text required" type="text"></div>
+				</div>
+				<div class="clearfix"></div>
+			</section>
+			<section>
+				<div class="section-left-s">
+					<label for="text_field">Speciality</label>
+				</div>
+				<div class="section-right">
+					<div class="section-input"><input name="txtspeciality" value="<?php echo $result['speciality']; ?>" id="speciality"  class="i-text required" type="text"></div>
+				</div>
+				<div class="clearfix"></div>
+			</section>
+					
+			<section>
+				<div class="section-left-s">
+					<label for="text_field">Start</label>
+				</div>
+				<div class="section-right">
+					
+						<select class="chzn-single" style="width:340px;" tabindex="2"	 name="selstart" id="start" required>							
+								<option><?php 
+									if($result['start'] != "")
+									{	
+										$start=explode(" ",$result['start']);
+				        					echo $start[0]; 
+									}
+									else
+									{
+										$result['start']="1:00:00 AM";
+										$start=explode(" ",$result['start']);
+				        					echo $start[0]; 
+									}
+								?></option>
+										<?php
+								$cnt=1;
+								
+								while($cnt <= 12)
+								{
+									if($cnt == $start[0])
+									{
+										$cnt++;
+										continue;
+									}
+									$cnt1="$cnt:00:00";
+									echo "<option value='$cnt1'>".$cnt1."</option>";
+									$cnt++;
+								}
+							?>
+					
+						</select>
+						<select class="chzn-single" style="width:340px;" tabindex="2" id="smed"  name="selsmed">
+							<option><?php $start=explode(" ",$result['start']);
+								      echo $start[1]; ?></option>
+							<?php
+								if($start[1] == AM)
+								{
+									echo "<option value='PM'>PM</option>";
+								}
+								else
+								{
+									echo "<option value='AM'>AM</option>";
+								}
+							?>
+									
+
+						</select>
+				</div>
+				
+			</section>
+			
+			<section>
+				<div class="section-left-s">
+					<label for="text_field">Till</label>
+				</div>
+				<div class="section-right">
+					<select class="chzn-single" style="width:340px;" tabindex="2" name="seltill" id="till" required>				
+						<option><?php
+									if($result['till'] != "")
+									{	
+										$till=explode(" ",$result['till']);
+				        					echo $till[0]; 
+									}
+									else
+									{
+										$result['till']="1:00:00 AM";
+										$till=explode(" ",$result['till']);
+				        					echo $till[0]; 
+									}
+								?></option>
+
+							<?php
+								$cnt=1;
+								while($cnt <= 12)
+								{
+									if($cnt == $till[0])
+									{
+										$cnt++;
+										continue;
+									}
+									
+									$cnt1="$cnt:00:00";
+									echo "<option value='$cnt1'>".$cnt1."</option>";
+									$cnt++;
+								}
+							?>
+						</select>
+						
+						<select class="chzn-single" style="width:340px;" tabindex="2" id="tmed"  name="seltmed">
+							<option><?php $till=explode(" ",$result['till']);
+								      echo $till[1]; ?></option>
+							<?php
+								if($till[1] == AM)
+								{
+									echo "<option value='PM'>PM</option>";
+								}
+								else
+								{
+									echo "<option value='AM'>AM</option>";
+								}
+							?>
+							
+						</select>
+				</div>
+				
+			</section>
+					
+			<section>
+				<div class="section-left-s">
+					<label for="text_field">Day</label>
+				</div>
+				<div class="section-right">
+					<select class="chzn-single" style="width:340px;" tabindex="2"	 name="selday" id="day" required>				
+							<?php 
+								$day[0]="Monday";
+								$day[1]="Tuesday";
+								$day[2]="Wednesday";
+								$day[3]="Thursday";
+								$day[4]="Friday";
+								$day[5]="Saturday";
+								$day[6]="Sunday";	
+								$cnt=0;
+								if($result['day'] != "")
+								{
+									echo "<option>".$result['day']."</option>";
+								}
+								else
+								{		
+									$result['day']="Monday";
+									echo "<option>".$result['day']."</option>";
+								}
+								while($cnt < count($day))
+								{
+									if($result['day'] == $day[$cnt])
+									{
+										$cnt++;
+										continue;
+									}
+									echo "<option>".$day[$cnt]."</option>";	
+									$cnt++;
+								}						
+							?>.			
+						
+					</select>
+				</div>
+				
+			</section>
+			
+			<section>
+				<div class="section-left-s">
+					<label for="text_field">Phone</label>
+				</div>
+				<div class="section-right">
+					<div class="section-input"><input value="<?php echo $result['phno']; ?>" name="txtphno" id="phno" class="i-text required" type="text"></div>
+				</div>
+				<div class="clearfix"></div>
+			</section>
+			<section>
+				<div class="section-left-s">
+					<label for="text_field">Email ID</label>
+				</div>
+				<div class="section-right">
+					<div class="section-input"><input value="<?php echo $result['email']; ?>" name="txtemail" id="email" class="i-text required" type="text"></div>
+				</div>
+				<div class="clearfix"></div>
+			</section>
+			<section class="no-padding">
+				<ul class="list">
+					<li class="wid-auto butt-margin">
+						<div class="r-float"><input class="icon-16 button" name="btnsubmit" id="btnupdate" value="update" type="button"></div>
+						<div class="r-float" id="editclose"><input class="button" value="Cancel" type="button"></div>
+					</li>
+					<li></li>
+				</ul>
+				<div class="clearfix"></div>
+			</section>
+		</fieldset>
+	</form>
+	<?php
+}
+?>
+
+</div>
+</div>
+<div id="editfade" class="dark_overlay"></div>
+
+<script src="js/jquery.min.js" type="text/javascript"></script>
+<script src="js/multiselect.js" type="text/javascript"></script>
+<script type="text/javascript"> 
+	var config = {
+	'.chzn-select'           : {},
+	'.chzn-select-deselect'  : {allow_single_deselect:true},
+	'.chzn-select-no-single' : {disable_search_threshold:10},
+	'.chzn-select-no-results': {no_results_text:'Oops, nothing found!'},
+	'.chzn-select-width'     : {width:"95%"}
+	}
+	for (var selector in config) {
+	$(selector).chosen(config[selector]);
+	}
+</script>
+</BODY>
+</html>
+<?php 
+}
+else
+{
+	header("location: lodin.php");
+}
+?>

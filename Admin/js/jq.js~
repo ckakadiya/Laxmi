@@ -1,0 +1,352 @@
+$("document").ready(function () {
+	//alert("sdfs");
+	var last_id="";
+	$("#planediv").hide();
+	
+	$("#showplane").click(function (){
+		$("#planediv").toggle();
+	});
+	
+	$("#data").hide();
+	
+	$("#user_data").hide();
+	
+	$("#doc").click(function(){
+		$("#data").show(1000);	
+	});
+	
+	$("#drname").click(function(){
+		$("#user_data").show(1000);	
+	});
+	
+	$("#hi1").hide();
+	
+	$("#hi2").hide();
+	
+	$("#editbt1").click(function(){
+		$("#hi1").show();
+		$("#sh1").hide()
+		$("#sh2").show();
+		$("#hi2").hide();
+		
+	});
+	
+	$("#editbt2").click(function(){
+		$("#sh2").hide();
+		$("#hi2").show();
+		$("#sh1").show();
+		$("#hi1").hide();
+		
+	});
+	
+	//user profile when click on edit
+	
+	$(".email").live("click",function(){
+ 		alert("hi");
+		var cid=$(this).attr('id');
+		alert(cid);
+		var id=cid.split("_");
+		alert (id[0]);
+		
+		
+		if(id[0]=="edit")
+		{
+			if(last_id != "")
+			{
+				alert("hello");
+				if(last_id == "newemail")
+				{
+					alert("=");
+					$("#newemail").empty();
+					$("#new").show();
+					$("#"+last_id).hide();
+					$("#emailrow_"+id[1]).hide();
+					$("#inputemailrow_"+id[1]).show();
+					last_id="inputemailrow_"+id[1];
+				}
+				if(last_id != "newemail")
+				{
+					alert("!=");
+					var com1=last_id.split("_");
+					//alert(com1);
+					$("#emailrow_"+com1[1]).show();
+					$("#"+last_id).hide();
+					$("#emailrow_"+id[1]).hide();
+					$("#inputemailrow_"+id[1]).show();
+					last_id="inputemailrow_"+id[1];
+					$("#newemail").empty();
+					$("#new").show();
+				}			
+			}
+			else
+			{
+				alert("if");
+				$("#emailrow_"+id[1]).hide();
+				$("#inputemailrow_"+id[1]).show();
+				last_id="inputemailrow_"+id[1];
+			}
+		}
+		
+		if( id[0] == "save")
+		{
+			alert("savemail");
+			
+				alert("ajux");
+				$.ajax({
+					type :"post",
+					url :"user_profile.php",
+					data :"sid="+$("#eid_"+id[1]).val()+"&email="+$("#txtemail_"+id[1]).val(),
+
+					beforeSend :function(){},
+					
+					success :function(a){
+							alert(a);
+										},
+					complete :function(){}
+				});
+		}
+		
+		if( id[0] == "cancel" )
+		{
+			$("#inputemailrow_"+id[1]).hide();
+			$("#emailrow_"+id[1]).show();
+		}
+		
+		if(id[0] == "delete")
+		{
+			// delete
+			alert("deletemail");
+			var del=confirm("Do you really want to delete");
+			if(del)
+			{
+				alert("ajux");
+				$.ajax({
+					type :"post",
+					url :"user_profile.php",
+					data : "eid="+$("#eid_"+id[1]).val(),
+
+					beforeSend :function(){},
+					
+					success :function(a){
+							alert(a);
+										},
+					complete :function(){}
+				});
+			}
+		}
+	});
+	$("#nemail").live("click",function(){
+		var email="<td><input type = 'email'  title = 'Enter email id' placeholder = 'Enter email id' required='required' id='txtmail' /></td><td><input type='submit' name ='submit1' value='Save' id = 'addmail'></td><td><input type='reset' name ='cancelmail' value='Cancel' id = 'cancelmail'></td>";
+			if(last_id != "")
+			{
+				var com1=last_id.split("_");
+				$("#emailrow_"+com1[1]).show();
+				$("#"+last_id).hide();
+				$("#newemail").show();
+				last_id="newemail";
+			}
+			else
+			{
+				//$("#newemail").show();
+				last_id="newemail";
+			}
+			$("#newemail").append(email);
+			$("#nemail").hide();
+	});
+	
+	$("#addmail").live("click",function(){
+		alert("insert");
+		$.ajax({
+			type:"post",
+			url: "user_profile.php",
+			data: "nemail="+$("#txtmail").val(),
+			
+			beforeSend: function(){},
+			success: function(a){					
+				alert(a);
+				//$("#nemail").show();
+			},
+			complete: function(){}
+		});
+		
+	});
+	
+	$("#cancelmail").live("click",function(){
+		$("#newemail").empty();
+		$("#nemail").show();
+		
+	});
+	
+	//-------------------------------contact------------------------------------------------
+
+	//edit contact
+	$(".phno").live("click",function(){
+		alert("hi");
+		var cid=$(this).attr("id");
+		var com=cid.split("_");
+		alert(com[0]);
+		if(com[0] == "editphno")
+		{
+			if(last_id != "")
+			{
+				var com1=last_id.split("_");
+				$("#phnorow_"+com1[1]).show();
+				$("#"+last_id).hide();
+				$("#phnorow_"+com[1]).hide();
+				$("#hphnorow_"+com[1]).show();
+				last_id="hphnorow_"+com[1];
+			}
+			else
+			{
+				$("#phnorow_"+com[1]).hide();
+				$("#hphnorow_"+com[1]).show();
+				last_id="hphnorow_"+com[1];
+			}
+
+		}
+
+		if( com[0] == "save")
+		{
+			alert("update");
+			//alert("id="+$("#hcid_"+com[1]).val()+"&phno="+$("#hphno_"+com[1]).val());
+			$.ajax({
+				type :"post",
+				url :"user_profile.php",
+				data :"pid="+$("#hcid_"+com[1]).val()+"&phno="+$("#hphno_"+com[1]).val(),
+
+				beforeSend :function(){
+				},
+				success :function(a){
+					alert(a);
+				},
+				complete :function(){}
+			});
+		}
+
+		if( com[0] == "cancel" )
+		{
+			$("#hphnorow_"+com[1]).hide();
+			$("#phnorow_"+com[1]).show();
+		}
+
+		
+		if(com[0] == "delphno")
+		{
+			var del=confirm("Do you really want to delete");
+			if(del)
+			{
+				alert("ajux");
+				$.ajax({
+					type :"post",
+					url: "user_profile.php",
+					data : "del_id="+$("#hcid_"+com[1]).val(),
+
+					beforeSend :function(){
+					},
+					success :function(a){
+						alert(a);
+					},
+					complete :function(){
+						
+					}
+				});
+			}
+		}
+	});
+
+	//add contact
+
+	$("#nphno").live("click",function(){
+		var phno="<td><input type = 'text'  title = 'Enter phno' placeholder = 'Enter phno' required='required' id='phno' pattern='^[0-9]{7,15}$' /></td><td><input type='submit' name ='submit1' value='Save' id = 'addphno'></td><td><input type='reset' name ='cancelphno' value='Cancel' id = 'cancelphno'></td>";
+		if(last_id != "")
+		{
+			var com1=last_id.split("_");
+			$("#phnorow_"+com1[1]).show();
+			$("#"+last_id).hide();
+			$("#newphno").show();
+			last_id="newphno";
+		}
+		else
+		{
+			//$("#newemail").show();
+			last_id="newphno";
+		}
+		$("#newphno").append(phno);
+		$("#nphno").hide();
+	});
+
+	$("#addphno").live("click",function(){
+		$.ajax({
+			type:"post",
+			url: "user_profile.php",
+			data: "iphno="+$("#phno").val(),
+			
+			beforeSend: function(){},
+			success: function(a){					
+				alert(a);
+				//$("#nphno").show();
+			},
+			complete: function(){}
+		});
+	});
+
+	$("#cancelphno").live("click",function(){
+		$("#newphno").empty();
+		$("#nphno").show();
+		
+	});
+
+
+	$(".click").live("click",function()
+	{
+		var aid=$(this).attr("id");
+		alert(aid);
+		var upd=aid.split("_");
+		if(upd[0]=="update")
+		{
+			$.ajax({
+				type:"post",
+				url: "delete_update_appointment.php",
+				data: "aid="+upd[1],		
+				
+				beforeSend: function(){},
+				success: function(a){					
+					
+					alert(a);
+				},
+				complete: function(){
+						$('#apointment_box').show(function(){
+						$('#main1').css("display","block");
+						$('#apointment_box').css("display","block");},2000);
+					}
+			});
+		}
+		if(upd[0]=="delete")
+		{
+			alert(upd[1]);
+			$.ajax({
+				type:"post",
+				url: "delete_update_appointment.php",
+				data: "del_id="+upd[1],		
+				
+				beforeSend: function(){},
+				success: function(a){					
+					
+					alert(a);
+				},
+				complete: function(){
+					}
+			});
+		}
+		
+		
+	})
+	
+	$('#close').click(function()
+	{
+		$('#main1').css("display","none");
+		$('#apointment_box').css("display","none");
+	})
+	
+});
+
